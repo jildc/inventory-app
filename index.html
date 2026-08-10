@@ -8,6 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Pink & Yellow Inventory">
 <link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="app-icon.png">
+<link rel="apple-touch-icon" href="app-icon.png">
 <title>Kinlove FOH Inventory</title>
 <style>
 :root{--pink:#EFA3B4;--pink2:#F9D7DE;--yellow:#F8D97A;--yellow2:#FFF2C4;--cream:#FFF9F5;--white:#fff;--ink:#514347;--muted:#907F83;--line:#F0DFE1;--red:#C85C6D}
@@ -19,13 +21,13 @@ button{border:0;border-radius:14px;padding:12px;font-weight:800;font-size:14px;b
 button.yellow{background:var(--yellow);color:var(--ink);box-shadow:none}button.soft{background:var(--pink2);color:var(--ink);box-shadow:none}button.red{background:#f7dce1;color:var(--red);box-shadow:none}
 .search{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:#fff;font-size:16px;margin-bottom:12px;outline:none}
 .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:0 3px 12px #b77c8b0d}
-.section{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.section h2{font-size:16px;margin:0}.count{font-size:11px;background:var(--yellow2);padding:5px 8px;border-radius:6px}
+.section{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.section h2{font-size:16px;margin:0}.count{font-size:11px;background:var(--yellow2);padding:5px 8px;border-radius:8px}
 .item{display:grid;grid-template-columns:1fr auto;gap:10px;padding:12px 0;border-top:1px solid var(--line)}.item:first-of-type{border-top:0}
 .name{font-weight:800}.updated{font-size:10px;color:var(--muted);margin-top:4px}.stock{display:flex;align-items:center;gap:6px}
 .stock button{width:38px;height:38px;padding:0;border-radius:11px;font-size:21px}.minus{background:var(--pink2);color:var(--ink);box-shadow:none}
 .qty{min-width:42px;text-align:center;font-size:18px;font-weight:900;background:var(--yellow2);padding:8px 4px;border-radius:10px}.low{color:var(--red)}
 .note{font-size:12px;color:var(--muted);line-height:1.5}.empty{text-align:center;color:var(--muted);padding:25px}
-.modal{position:fixed;inset:0;background:#4d394080;display:none;align-items:flex-end;z-index:20}.modal.open{display:flex}.sheet{width:100%;max-width:760px;margin:auto;background:#fff;border-radius:20px 20px 0 0;padding:20px;max-height:80vh;overflow-y:auto}
+.modal{position:fixed;inset:0;background:#4d394080;display:none;align-items:flex-end;z-index:20}.modal.open{display:flex}.sheet{width:100%;max-width:760px;margin:auto;background:#fff;border-radius:20px 20px 0 0;padding:18px;max-height:90vh;overflow-y:auto}
 label{font-size:12px;font-weight:800}input,select{width:100%;padding:13px;border:1px solid var(--line);border-radius:12px;margin:6px 0 13px;font-size:16px;background:#fff}
 .row{display:flex;gap:8px}.row>*{flex:1}.log{padding:10px 0;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}.log b{color:var(--ink)}
 .install{background:linear-gradient(135deg,#fff1b9,#fbdce3)}
@@ -69,10 +71,10 @@ label{font-size:12px;font-weight:800}input,select{width:100%;padding:13px;border
 
 <script>
 const defaults=[
-["Drinks","Schweppes"],["Drinks","Brr"],["Drinks","Mountain Dew"],["Drinks","Coke Zero"],["Drinks","Sprite"],["Drinks","500ml Water"],["Drinks","Pocari 500ml"],["Drinks","Welch Grape"],["Drinks","Local Lemonade"],["Drinks","Coffee Powder"],
+["Drinks","Schweppes"],["Drinks","Brr"],["Drinks","Mountain Dew"],["Drinks","Coke Zero"],["Drinks","Sprite"],["Drinks","500ml Water"],["Drinks","Pocari 500ml"],["Drinks","Welch Grape"],["Drinks","Local Coffee"],
 ["Cups & Packaging","16oz Cups"],["Cups & Packaging","22 oz Cups"],["Cups & Packaging","12oz Paper Cups"],["Cups & Packaging","Brown Kraft"],["Cups & Packaging","White Kraft"],
 ["Cakes","Classic Tiramisu Cake"],["Cakes","Matcha Tiramisu Cake"],["Cakes","Biscoff Tiramisu Cake"],
-["Bouquets","350 Dried Flowers"],["Bouquets","500 Dried Flowers"],["Bouquets","2000 Peonies"],["Bouquets","1000 Single Rose"],["Bouquets","1,500 Preserved"],["Bouquets","2,500 Preserved"],["Bouquets","3,500 Preserved"],
+["Bouquets","350 Dried Flowers"],["Bouquets","500 Dried Flowers"],["Bouquets","2000 Peonies"],["Bouquets","1000 Single Rose"],["Bouquets","1,500 Preserved"],["Bouquets","2,500 Preserved"],["Bouquets","Luxury Arrangement"],
 ["Flowers + Coffee","Flowers + Coffee (799)"]
 ];
 let items=JSON.parse(localStorage.getItem("py_items")||"null"),logs=JSON.parse(localStorage.getItem("py_logs")||"[]");
@@ -86,13 +88,13 @@ let q=document.getElementById("search").value.toLowerCase(),box=document.getElem
 [...new Set(items.map(i=>i.cat))].forEach(cat=>{
 let a=items.filter(i=>i.cat===cat&&i.name.toLowerCase().includes(q));if(!a.length)return;
 let c=document.createElement("div");c.className="card";c.innerHTML=`<div class="section"><h2>${esc(cat)}</h2><span class="count">${a.length} items</span></div>`;
-a.forEach(i=>{let r=document.createElement("div");r.className="item";r.innerHTML=`<div><div class="name">${esc(i.name)}</div><div class="updated">Updated: ${fmt(i.updated)}</div></div><div class="stock"><button class="minus" onclick="change(${i.id},-1)">−</button><div class="qty ${i.qty<5?"low":""}">${i.qty}</div><button onclick="change(${i.id},1)">＋</button></div>`;box.appendChild(r)});box.appendChild(c);box.appendChild(document.createElement("hr"))});
+a.forEach(i=>{let r=document.createElement("div");r.className="item";r.innerHTML=`<div><div class="name">${esc(i.name)}</div><div class="updated">Updated: ${fmt(i.updated)}</div></div><div class="stock"><button class="minus" onclick="change(${i.id},-1)">−</button><div class="qty ${i.qty<5?"low":""}">${i.qty}</div><button onclick="change(${i.id},1)">+</button></div>`;c.appendChild(r)});box.appendChild(c)});
 if(!box.children.length)box.innerHTML='<div class="empty">No items found 🌸</div>';
 }
-function change(id,d){let i=items.find(x=>x.id===id);if(!i||d<0&&i.qty===0)return;i.qty+=d;i.updated=new Date().toISOString();logs.unshift({time:i.updated,name:i.name,delta:d,qty:i.qty});logs=logs.slice(0,50);save();render()}
+function change(id,d){let i=items.find(x=>x.id===id);if(!i||d<0&&i.qty===0)return;i.qty+=d;i.updated=new Date().toISOString();logs.unshift({time:i.updated,name:i.name,delta:d,qty:i.qty});logs=logs.slice(0,100);save();render()}
 function openAdd(){addModal.classList.add("open")}function closeAdd(){addModal.classList.remove("open")}
-function addItem(){let n=newName.value.trim();if(!n)return alert("Please enter an item name.");items.push({id:Date.now(),cat:newCat.value,name:n,qty:Math.max(0,Number(newQty.value)||0),updated:new Date().toISOString()});newName.value="";newQty.value="0";save();closeAdd();render()}
-function openHistory(){history.innerHTML=logs.length?logs.map(l=>`<div class="log"><b>${esc(l.name)}</b> ${l.delta>0?"+1":"−1"} → ${l.qty}<br>${fmt(l.time)}</div>`).join(""):'<div class="empty">No history yet</div>';historyModal.classList.add("open")}
+function addItem(){let n=newName.value.trim();if(!n)return alert("Please enter an item name.");items.push({id:Date.now(),cat:newCat.value,name:n,qty:Math.max(0,Number(newQty.value)||0),updated:new Date().toISOString()});newName.value="";newQty.value="0";save();render();closeAdd()}
+function openHistory(){history.innerHTML=logs.length?logs.map(l=>`<div class="log"><b>${esc(l.name)}</b> ${l.delta>0?"+1":"−1"} → ${l.qty}<br>${fmt(l.time)}</div>`).join(""):'<div class="empty">No history yet 📋</div>';historyModal.classList.add("open")}
 function closeHistory(){historyModal.classList.remove("open")}function clearHistory(){if(confirm("Clear all history?")){logs=[];save();openHistory()}}
 function resetItems(){if(confirm("Set all stock quantities to 0?")){items.forEach(i=>i.qty=0);save();render()}}
 function exportData(){let b=new Blob([JSON.stringify({exportedAt:new Date().toISOString(),items,logs},null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="inventory-backup.json";a.click()}
