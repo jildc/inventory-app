@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#efb3c1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kinlove Inventory">
+<link rel="apple-touch-icon" href="kinlove-logo.png">
+<title>Kinlove Inventory</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#fffaf8;color:#3b3034;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,textarea,select{font:inherit}
+button{border:0;cursor:pointer}
+.hidden{display:none!important}
+.header{background:#efc0cc;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;min-height:86px;position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:12px}.brand img{width:54px;height:54px;border-radius:16px;object-fit:cover}.brand h1{margin:0;font-size:20px}.brand small{color:#765e65}
+.lock{background:#fff;border-radius:16px;width:52px;height:52px;font-size:23px}
+.page{max-width:900px;margin:auto;padding:18px 15px 100px}
+.hero{background:linear-gradient(135deg,#f9dfe4,#fff1bb);border-radius:26px;padding:24px;text-align:center;margin-bottom:15px}.hero img{width:92px;height:92px;border-radius:25px}.hero h2{font-family:Georgia,serif;font-size:28px;margin:10px 0 4px}.hero p{margin:0;color:#765e65}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}.inventoryCard{padding:20px;border-radius:22px;text-align:left;font-weight:750;font-size:17px;min-height:100px;display:flex;justify-content:space-between;align-items:center}.foh{background:#f8dfe4}.kit{background:#f3c8d3}.inventoryCard span{font-size:28px}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}.quick button{min-height:105px;border-radius:20px;background:#ffefaa;font-weight:750;font-size:15px}.quick b{display:block;font-size:25px;margin-bottom:5px}.quick .pink{background:#eb9bb1;color:#fff}
+.save{margin-top:14px}.save button{padding:14px 20px;border-radius:15px;background:#eb9bb1;color:#fff;font-weight:750}
+.status{background:#fff;border:1px solid #eedfe0;border-radius:18px;padding:13px;margin-top:14px;color:#806f74;font-size:12px}
+.title{display:flex;align-items:center;gap:10px;margin-bottom:12px}.back{width:42px;height:42px;border-radius:13px;background:#fff0f3;font-size:24px}.title h2{font-size:21px;margin:0}
+.search{width:100%;padding:13px;border:1px solid #eadbdd;border-radius:15px;background:#fff;margin-bottom:10px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}.primary,.secondary,.danger{padding:12px 15px;border-radius:14px;font-weight:750}.primary{background:#eb9bb1;color:#fff}.secondary{background:#ffefaa;color:#514522}.danger{background:#fff0f0;color:#c84e68}
+.section{background:#fff;border:1px solid #eedfe0;border-radius:19px;margin:10px 0;overflow:hidden}.sectionhead{padding:13px 14px;background:linear-gradient(90deg,#fff0b0,#fff);font-weight:750;display:flex;justify-content:space-between}
+.item{display:grid;grid-template-columns:minmax(0,1fr) 31px 45px 31px;gap:5px;align-items:center;padding:9px 10px;border-top:1px solid #f2e9e9;font-size:13px}.circle{width:30px;height:30px;border-radius:50%;background:#fde5ea;color:#c4516d;font-weight:800}.qty{text-align:center;font-weight:800}.trash{background:#fff0f0;border-radius:8px;width:30px;height:30px}.note{grid-column:1/-1;width:100%;min-height:55px;border:1px solid #eadbdd;border-radius:11px;padding:8px;resize:vertical}
+.bottom{position:fixed;bottom:0;left:0;right:0;padding:9px 14px;background:#fffaf8ee;border-top:1px solid #eedfe0;z-index:6}.bottom button{width:100%}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;background:linear-gradient(145deg,#f9dce2,#fff3bd)}.loginBox{width:min(420px,100%);background:#fffaf8;border-radius:30px;padding:25px 20px;text-align:center;box-shadow:0 20px 60px #8e596622}.loginBox img{width:115px;height:115px;border-radius:30px}.loginBox h2{font-family:Georgia,serif;font-size:28px;margin:10px 0 4px}.loginBox p{color:#88777d}.loginBox input{width:100%;padding:13px;border:1px solid #eadbdd;border-radius:13px;margin:6px 0}.loginBox .primary{width:100%;margin-top:8px}.link{background:none;color:#d55f79;margin-top:8px}.setup{border-top:1px solid #eadbdd;margin-top:14px;padding-top:14px;text-align:left}
+.modal{position:fixed;inset:0;background:#392b2d66;display:flex;align-items:center;justify-content:center;padding:18px;z-index:20}.modalBox{background:#fff;border-radius:24px;padding:22px;width:min(430px,100%)}.modalBox h3{margin-top:0}.modalBox input,.modalBox select{width:100%;padding:12px;border:1px solid #eadbdd;border-radius:12px;margin:6px 0}.modalActions{display:flex;gap:8px;margin-top:10px}
+@media(max-width:560px){.cards{grid-template-columns:1fr}.quick{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div id="login" class="login">
+  <div class="loginBox">
+    <img src="kinlove-logo.png" alt="KinLove logo">
+    <h2>Kinlove Inventory</h2>
+    <p>Secure inventory management</p>
+    <input id="loginPass" type="password" placeholder="Password">
+    <button class="primary" id="unlockBtn">Unlock</button>
+    <button class="link" id="forgotBtn">Forgot password?</button>
+    <div id="setupBox" class="setup hidden">
+      <input id="newPass" type="password" placeholder="Create password">
+      <input id="recoveryEmail" type="email" placeholder="Recovery email address">
+      <button class="secondary" id="createBtn">Create secure password</button>
+    </div>
+    <div id="recoverBox" class="setup hidden">
+      <input id="recoverEmail" type="email" placeholder="Recovery email address">
+      <input id="resetPass" type="password" placeholder="New password">
+      <button class="secondary" id="resetBtn">Reset password</button>
+    </div>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <header class="header">
+    <div class="brand">
+      <img src="kinlove-logo.png" alt="KinLove">
+      <div><h1>Kinlove Inventory</h1><small id="updated">Ready</small></div>
+    </div>
+    <button class="lock" id="lockBtn">🔒</button>
+  </header>
+  <main id="page" class="page"></main>
+  <div class="bottom"><button class="primary" id="saveBtn">💾 Save inventory update</button></div>
+</div>
+
+<div id="modal" class="modal hidden"><div class="modalBox"><h3 id="modalTitle"></h3><div id="modalBody"></div></div></div>
+
+<script>
+const DATA = {"foh":{"DRINKS":["Schweppes","Brr","Mountain dew","Coke zero","Sprite","500ml water","Pocari 500ml","Welch grape","Welch orange","Arizona lemon","Arizona peach"],"CUPS & PACKAGING":["16oz cups","22 oz cups","cups cover","12oz papercups","Papercups cover","Brown kraft","Bk cover","White kraft","Wk cover"],"CAKES":["Classic Tiramisu cake","Matcha Tiramisu cake","Biscoff Tiramisu cake"],"BOUQUETS":["350 dried flowers","500 dried flowers","2000 peonies","1000 singlerose","1,500 preserved","2,500 preserved","3,500 preserved","1000/pax Pampass","Flowers + coffee (799)"],"ICE CREAM":["Items to be added"],"CONDIMENTS":["Sugar/pouch","Brown sugar in grams","White sugar in grams","Darkchoco powder in grams","Matcha powder in grams","Uji powder in grams","Hojicha powder in grams","Barley powder in grams","Blueberry Jam","Strawberry Jam","Mango Syrup","Blueberry Syrup","Mixedberry Syrup","Lemon Syrup","Calamansi Syrup","Frappe Syrup","Caramel Syrup","Choco drizzle","Caramel drizzle"]},"kitchen":{"SNACKS":["Churros","Popcorn original","Ramen mild","Ramen spicy","Fries/pax","Pizza hawaiian","Pizza No meat"],"PER PIECE":["Egg","Cheese (square)","Ham","Slice Bread"],"MEALS":["Bacon/pax","Can Cornbeef","Can CornTuna","Chicken Fillet","Lumpia/2","Chicken/pax","Pancake/pax"],"PACKAGING":["Take out Box for pancake","Take out Sauce cup"],"CONDIMENTS":["Pineapple /set","Rice / serving","Ice / pax","Chocolate dip in grams","Mayo in grams","BBQ sauce in grams","Maggi Savor","White Sugar in grams","Brown Sugar in grams","Oil in grams","Salt in grams","Cinnamon in grams","Maple Syrup"]}};
+let state = JSON.parse(localStorage.getItem("kinloveInventory") || "null") || {q:{},n:{},custom:{},updated:null};
+let current = "home";
+let locked = false;
+let history = [];
+
+const $ = id => document.getElementById(id);
+const now = () => new Date().toLocaleString();
+const key = (a,b,c) => a + "|" + b + "|" + c;
+
+function esc(v){
+  return String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+function persist(){
+  localStorage.setItem("kinloveInventory", JSON.stringify(state));
+  $("updated").textContent = state.updated ? "Updated " + state.updated : "Ready";
+}
+function snapshot(){ history.push(JSON.stringify(state)); if(history.length>30) history.shift(); }
+
+function home(){
+  current = "home";
+  $("page").innerHTML = `
+    <div class="hero"><img src="kinlove-logo.png"><h2>Kinlove Inventory</h2><p>Simple • Secure • Offline</p></div>
+    <div class="cards">
+      <button class="inventoryCard foh" id="fohCard"><span>📠 FOH Inventory</span><b>›</b></button>
+      <button class="inventoryCard kit" id="kitchenCard"><span>🍳 Kitchen Inventory</span><b>›</b></button>
+    </div>
+    <div class="quick">
+      <button id="addHome"><b>＋</b>Add item</button>
+      <button id="undoHome"><b>↩️</b>Undo</button>
+      <button id="resetHome"><b>🔄</b>Reset quantities</button>
+      <button class="pink" id="lockHome"><b>🔒</b>Finalize / Lock</button>
+    </div>
+    <div class="save"><button id="saveHome">💾 Save update</button></div>
+    <div class="status">🕐 Last updated: <strong>${state.updated || "No updates yet"}</strong><br>📴 Normal inventory use works offline after the app has loaded once.</div>
+  `;
+  $("fohCard").onclick = () => openInventory("foh");
+  $("kitchenCard").onclick = () => openInventory("kitchen");
+  $("addHome").onclick = addItem;
+  $("undoHome").onclick = undo;
+  $("resetHome").onclick = resetQuantities;
+  $("lockHome").onclick = finalizeLock;
+  $("saveHome").onclick = saveUpdate;
+}
+
+function openInventory(which){
+  current = which;
+  renderInventory();
+}
+
+function itemNames(section){
+  return DATA[current][section].concat(state.custom[key(current,section,"__custom")] || []);
+}
+
+function renderInventory(){
+  const title = current === "foh" ? "📠 FOH Inventory" : "🍳 Kitchen Inventory";
+  let html = `<div class="title"><button class="back" id="backBtn">‹</button><h2>${title}</h2></div>`;
+  html += `<input id="search" class="search" placeholder="🔍 Search item...">`;
+  html += `<div class="actions"><button class="secondary" id="addBtn">＋ Add item</button><button class="secondary" id="undoBtn">↩ Undo</button><button class="secondary" id="resetBtn">🔄 Reset</button><button class="danger" id="finalBtn">🔒 Finalize / Lock</button></div>`;
+  html += `<div id="sections">`;
+  for(const section of Object.keys(DATA[current])){
+    html += `<section class="section"><div class="sectionhead"><span>${esc(section)}</span><span>⌄</span></div>`;
+    for(const name of itemNames(section)) html += renderItem(section,name);
+    html += `</section>`;
+  }
+  html += `</div>`;
+  $("page").innerHTML = html;
+  $("backBtn").onclick = home;
+  $("addBtn").onclick = addItem;
+  $("undoBtn").onclick = undo;
+  $("resetBtn").onclick = resetQuantities;
+  $("finalBtn").onclick = finalizeLock;
+  $("search").oninput = filterItems;
+}
+
+function renderItem(section,name){
+  const k = key(current,section,name);
+  const q = Number(state.q[k] || 0);
+  const custom = (state.custom[key(current,section,"__custom")] || []).includes(name);
+  const note = section === "CONDIMENTS"
+    ? `<textarea class="note" data-note="${esc(k)}" placeholder="Notes (optional)" ${locked ? "disabled":""}>${esc(state.n[k] || "")}</textarea>`
+    : "";
+  return `<div class="item" data-item="${esc(name.toLowerCase())}">
+    <div>${esc(name)}</div>
+    <button class="circle minus" data-k="${esc(k)}" ${locked?"disabled":""}>−</button>
+    <div class="qty">${q}</div>
+    <button class="circle plus" data-k="${esc(k)}" ${locked?"disabled":""}>＋</button>
+    ${custom && !locked ? `<button class="trash" data-del-section="${esc(section)}" data-del-name="${esc(name)}">🗑️</button>` : "<span></span>"}
+    ${note}
+  </div>`;
+}
+
+function attachItemEvents(){
+  document.querySelectorAll(".minus").forEach(b => b.onclick = () => changeQty(b.dataset.k,-1));
+  document.querySelectorAll(".plus").forEach(b => b.onclick = () => changeQty(b.dataset.k,1));
+  document.querySelectorAll(".trash").forEach(b => b.onclick = () => deleteItem(b.dataset.delSection,b.dataset.delName));
+  document.querySelectorAll(".note").forEach(n => n.onchange = () => {
+    if(locked) return;
+    snapshot(); state.n[n.dataset.note] = n.value; persist();
+  });
+}
+
+const oldRenderInventory = renderInventory;
+renderInventory = function(){
+  oldRenderInventory();
+  attachItemEvents();
+};
+
+function changeQty(k,delta){
+  if(locked){ alert("Inventory is locked. Unlock it first."); return; }
+  snapshot();
+  state.q[k] = Math.max(0, Number(state.q[k] || 0) + delta);
+  renderInventory();
+}
+
+function filterItems(){
+  const q = $("search").value.toLowerCase();
+  document.querySelectorAll(".item").forEach(el => {
+    el.style.display = el.dataset.item.includes(q) ? "grid" : "none";
+  });
+}
+
+function resetQuantities(){
+  if(locked){ alert("Inventory is locked. Unlock it first."); return; }
+  if(!confirm("Reset all quantities in this inventory to 0?")) return;
+  snapshot();
+  if(current === "home"){
+    for(const inv of ["foh","kitchen"]) for(const section of Object.keys(DATA[inv]))
+      for(const name of DATA[inv][section].concat(state.custom[key(inv,section,"__custom")] || []))
+        state.q[key(inv,section,name)] = 0;
+  }else{
+    for(const section of Object.keys(DATA[current]))
+      for(const name of itemNames(section)) state.q[key(current,section,name)] = 0;
+  }
+  state.updated = now(); persist(); render();
+}
+
+function saveUpdate(){
+  if(locked){ alert("Inventory is locked. Unlock it first."); return; }
+  state.updated = now(); persist(); render(); alert("Inventory saved at " + state.updated);
+}
+
+function finalizeLock(){
+  state.updated = now(); persist(); locked = true; render();
+}
+
+function undo(){
+  if(!history.length){ alert("Nothing to undo."); return; }
+  state = JSON.parse(history.pop()); persist(); render();
+}
+
+function showModal(title,body){
+  $("modalTitle").textContent = title;
+  $("modalBody").innerHTML = body;
+  $("modal").classList.remove("hidden");
+}
+function closeModal(){ $("modal").classList.add("hidden"); }
+
+function addItem(){
+  if(locked){ alert("Inventory is locked. Unlock it first."); return; }
+  if(current === "home") current = "foh";
+  const options = Object.keys(DATA[current]).map(s => `<option>${esc(s)}</option>`).join("");
+  showModal("Add inventory item", `<input id="newName" placeholder="Item name"><select id="newSection">${options}</select><input id="newQty" type="number" min="0" placeholder="Starting quantity"><div class="modalActions"><button class="primary" id="confirmAdd">Add item</button><button class="secondary" id="cancelAdd">Cancel</button></div>`);
+  $("confirmAdd").onclick = () => {
+    const name = $("newName").value.trim(), section = $("newSection").value;
+    if(!name){ alert("Enter an item name."); return; }
+    snapshot();
+    const ck = key(current,section,"__custom");
+    state.custom[ck] = state.custom[ck] || [];
+    if(!state.custom[ck].includes(name)) state.custom[ck].push(name);
+    state.q[key(current,section,name)] = Number($("newQty").value) || 0;
+    closeModal(); renderInventory();
+  };
+  $("cancelAdd").onclick = closeModal;
+}
+
+function deleteItem(section,name){
+  if(!confirm("Delete " + name + "?")) return;
+  snapshot();
+  const ck = key(current,section,"__custom");
+  state.custom[ck] = (state.custom[ck] || []).filter(x => x !== name);
+  delete state.q[key(current,section,name)];
+  delete state.n[key(current,section,name)];
+  renderInventory();
+}
+
+$("modal").onclick = e => { if(e.target.id === "modal") closeModal(); };
+$("saveBtn").onclick = saveUpdate;
+$("lockBtn").onclick = () => { locked = true; render(); };
+
+async function sha256(value){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(buf)).map(x => x.toString(16).padStart(2,"0")).join("");
+}
+
+$("unlockBtn").onclick = async () => {
+  const saved = localStorage.getItem("kinlovePassword");
+  if(!saved){ $("setupBox").classList.remove("hidden"); return; }
+  if(await sha256($("loginPass").value) !== saved){ alert("Incorrect password."); return; }
+  locked = false; $("login").classList.add("hidden"); $("app").classList.remove("hidden"); render();
+};
+
+$("createBtn").onclick = async () => {
+  const p = $("newPass").value, email = $("recoveryEmail").value.trim();
+  if(p.length < 6 || !email){ alert("Enter a password of at least 6 characters and a recovery email."); return; }
+  localStorage.setItem("kinlovePassword", await sha256(p));
+  localStorage.setItem("kinloveRecoveryEmail", email);
+  $("setupBox").classList.add("hidden");
+  alert("Password created. Enter it above to unlock.");
+};
+
+$("forgotBtn").onclick = () => {
+  if(!localStorage.getItem("kinlovePassword")) $("setupBox").classList.remove("hidden");
+  else $("recoverBox").classList.toggle("hidden");
+};
+
+$("resetBtn").onclick = async () => {
+  const email = $("recoverEmail").value.trim(), p = $("resetPass").value;
+  if(email !== localStorage.getItem("kinloveRecoveryEmail")){ alert("Recovery email does not match."); return; }
+  if(p.length < 6){ alert("New password must be at least 6 characters."); return; }
+  localStorage.setItem("kinlovePassword", await sha256(p));
+  $("recoverBox").classList.add("hidden");
+  alert("Password reset successfully.");
+};
+
+function render(){ if(current === "home") home(); else renderInventory(); }
+
+if(!localStorage.getItem("kinlovePassword")) $("setupBox").classList.remove("hidden");
+</script>
+</body>
+</html>
